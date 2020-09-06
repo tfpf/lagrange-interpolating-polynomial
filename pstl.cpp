@@ -30,7 +30,7 @@ class Polynomial
 
     public: Polynomial();
     public: Polynomial(std::string, std::vector<float>);
-    public: Polynomial(std::string, std::vector<float>, std::vector<float>);
+    public: Polynomial(std::vector<float>, std::vector<float>);
     public: void sanitise(void);
     public: void print(void);
     public: void set(std::vector<float>);
