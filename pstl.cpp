@@ -100,7 +100,17 @@ removed.
 -----------------------------------------------------------------------------*/
 void Polynomial::sanitise(void)
 {
-    while(!coeffs.empty() && std::abs(coeffs.back()) <= 1e-10)
+    // remove small numbers
+    for(double& d: coeffs)
+    {
+        if(std::abs(d) <= 1e-10)
+        {
+            d = 0;
+        }
+    }
+
+    // delete trailing zeros
+    while(!coeffs.empty() && coeffs.back() == 0)
     {
         coeffs.pop_back();
     }
