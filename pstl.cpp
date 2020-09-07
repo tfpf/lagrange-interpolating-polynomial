@@ -49,37 +49,35 @@ class Polynomial
 };
 
 /*-----------------------------------------------------------------------------
-Constructor. Does default initialisation.
+Constructor. Sets the name of the polynomial to a generic polynomial-looking
+name and initialises the coefficient vector to an empty vector.
 -----------------------------------------------------------------------------*/
 Polynomial::Polynomial()
+    : name("p(x)"), coeffs({})
 {
-    name = "p(x)";
-    coeffs = {};
 }
 
 /*-----------------------------------------------------------------------------
-Constructor. Initialises the polynomial coefficients using the vector provided
-and assign a default name.
+Constructor. Sets the name of the polynomial to a generic polynomial-looking
+name and initialises the coefficient vector to the user-provided vector.
 -----------------------------------------------------------------------------*/
 Polynomial::Polynomial(std::vector<double> coeffs)
+    : name("p(x)"), coeffs(coeffs)
 {
-    this->name = "p(x)";
-    this->coeffs = coeffs;
     this->sanitise();
 }
 
 /*-----------------------------------------------------------------------------
-Constructor. Initialises the name and the polynomial coefficients using the
-variables provided.
+Constructor. Sets the name and coefficients of the polynomial to what the user
+has provided.
 
 Args:
     name: string (symbol or group of symbols used to represent the polynomial)
     coeffs: vector (coefficients of the polynomial, ordered as described above)
 -----------------------------------------------------------------------------*/
 Polynomial::Polynomial(std::vector<double> coeffs, std::string name)
+    : name(name), coeffs(coeffs)
 {
-    this->name = name;
-    this->coeffs = coeffs;
     this->sanitise();
 }
 
