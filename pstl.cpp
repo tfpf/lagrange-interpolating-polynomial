@@ -1,4 +1,6 @@
 #include <algorithm>
+#include <cmath>
+#include <iomanip>
 #include <iostream>
 #include <iterator>
 #include <string>
@@ -87,13 +89,18 @@ possibly after an operation, if the vector contains zeros at the end, they must
 be removed. It does not make sense to represent non-existent coefficients after
 the highest power.
 
+Another thing this method will do is remove extremely small coefficients which
+are likely the result of floating-point precision problems (extremely small
+values should probably have been zeros anyway).
+
 For instance, if, for some reason, the coefficient vector becomes
-    [3.3, 1.97, 8, 0, 4.2, 0, 0]
-it has to be sanitised: the last two elements in the vector have to be removed.
+    [3.3, 1.97, 8, 0, 4.2, 0, 1e-17, 0]
+it has to be sanitised: the last three elements in the vector have to be
+removed.
 -----------------------------------------------------------------------------*/
 void Polynomial::sanitise(void)
 {
-    while(!coeffs.empty() && coeffs.back() == 0)
+    while(!coeffs.empty() && std::abs(coeffs.back()) <= 1e-10)
     {
         coeffs.pop_back();
     }
@@ -109,7 +116,7 @@ void Polynomial::print(void) const
     std::cout << name << " = [";
     for(auto i = coeffs.begin(); i != coeffs.end(); ++i)
     {
-        std::cout << *i << ", ";
+        std::cout << std::setprecision(15) << *i << ", ";
     }
     std::cout << "]\n";
 }

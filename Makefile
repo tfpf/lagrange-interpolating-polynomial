@@ -4,9 +4,11 @@ CFLAGS = -O2
 STD    = -std=c++11
 WFLAGS = -Wall -Wextra
 
-Source     = main.cpp
-Assembly   = main.s
-Binary     = main.elf
+Source   = main.cpp
+Assembly = main.s
+Binary   = main.elf
+
+input = input.txt
 
 
 .PHONY: clean asm comp exec run all
@@ -22,7 +24,7 @@ comp:
 	$(CC) $(CFLAGS) $(STD) $(WFLAGS) -o $(Binary) $(Source)
 
 exec:
-	./$(Binary)
+	./$(Binary) $(input)
 
 run: comp exec
 
