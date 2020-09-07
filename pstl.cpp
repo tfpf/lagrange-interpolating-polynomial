@@ -210,80 +210,181 @@ int Polynomial::degree(void) const
 }
 
 /*-----------------------------------------------------------------------------
-Define polynomial addition. When two polynomials of different degrees are
-added, the result has to be a polynomial with degree equal to the greater of
-the two degrees.
+Define polynomial addition. The user may want to add two polynomials, or a
+polynomial and a mathematical constant.
 
-The name of the resulting polynomial will be a combination of the names of the
-polynomials being added. Brackets will enclose this combination, because, after
-repeated mathematical operations, the name may not match the value because of
-operator precedence.
+If a polynomial and a mathematical constant are added, the first coefficient of
+the polynomial (if it exists) will get incremented by the provided constant.
+(If it doesn't exist, it has to be created and set to the provided constant.)
+
+If two polynomials are added, their corresponding coefficients are added. If
+their degrees are not the same, the result has to be a polynomial with degree
+equal to the greater of the two degrees; some coefficients in the polynomial
+with greater degree remain untouched because they have no corresponding
+coefficients in the other polynomial.
+
+The name of the resulting polynomial will be a combination of the entities
+being added. Brackets will enclose this combination, because, after repeated
+mathematical operations, the name may not match the value because of operator
+precedence.
+
+TODO At the moment, the addition of two polynomials is implemented in a very
+clumsy manner, though it is the best I could come up with right now. Improve
+that logic later.
 -----------------------------------------------------------------------------*/
+Polynomial operator+(Polynomial const& p, double f)
+{
+    std::string name = "(" + p.get_name() + " + " + std::to_string(f) + ")";
+    std::vector<double> coeffs = p.get();
+    if(p.degree() == -1)
+    {
+        coeffs.push_back(0);
+    }
+    coeffs[0] += f;
+
+    return Polynomial(coeffs, name);
+}
+
+Polynomial operator+(double f, Polynomial const& p)
+{
+    std::string name = "(" + std::to_string(f) + " + " + p.get_name() + ")";
+    std::vector<double> coeffs = p.get();
+    if(p.degree() == -1)
+    {
+        coeffs.push_back(0);
+    }
+    coeffs[0] += f;
+
+    return Polynomial(coeffs, name);
+}
+
 Polynomial operator+(Polynomial const& p, Polynomial const& q)
 {
-    // set up the name of the resulting polynomial
     std::string name = "(" + p.get_name() + " + " + q.get_name() + ")";
 
-    // ensure that both vectors are of equal size
-    std::vector<double> coeffs1 = p.get();
-    std::vector<double> coeffs2 = q.get();
-    int degree = std::max(p.degree(), q.degree());
-    coeffs1.resize(degree + 1, 0);
-    coeffs2.resize(degree + 1, 0);
+    std::vector<double> const& coeffs_p = p.get();
+    std::vector<double> const& coeffs_q = q.get();
+    int min_degree = std::min(p.degree(), q.degree());
+    int max_degree = std::max(p.degree(), q.degree());
+    std::vector<double> coeffs(max_degree + 1);
 
-    // set up the vector for the coefficients of the result
-    std::vector<double> coeffs(degree + 1);
-    for(int i = 0; i <= degree; ++i)
+    int i = 0;
+    for(; i <= min_degree; ++i)
     {
-        coeffs[i] = coeffs1[i] + coeffs2[i];
+        coeffs[i] = coeffs_p[i] + coeffs_q[i];
     }
-    Polynomial result(coeffs, name);
+    for(; i <= p.degree(); ++i)
+    {
+        coeffs[i] = coeffs_p[i];
+    }
+    for(; i <= q.degree(); ++i)
+    {
+        coeffs[i] = coeffs_q[i];
+    }
 
-    return result;
+    return Polynomial(coeffs, name);
 }
 
 /*-----------------------------------------------------------------------------
-Define polynomial subtraction. Same rules as addition apply: the different
-degrees case has to be taken care of.
+Define polynomial subtraction. Same rules as addition apply.
 -----------------------------------------------------------------------------*/
+Polynomial operator-(Polynomial const& p, double f)
+{
+    std::string name = "(" + p.get_name() + " - " + std::to_string(f) + ")";
+    std::vector<double> coeffs = p.get();
+    if(p.degree() == -1)
+    {
+        coeffs.push_back(0);
+    }
+    coeffs[0] -= f;
+
+    return Polynomial(coeffs, name);
+}
+
+Polynomial operator-(double f, Polynomial const& p)
+{
+    std::string name = "(" + std::to_string(f) + " - " + p.get_name() + ")";
+    std::vector<double> coeffs = p.get();
+    std::transform(coeffs.begin(), coeffs.end(), coeffs.begin(), std::negate<double>());
+    if(coeffs.size() == 0)
+    {
+        coeffs.push_back(0);
+    }
+    coeffs[0] += f;
+
+    return Polynomial(coeffs, name);
+}
+
 Polynomial operator-(Polynomial const& p, Polynomial const& q)
 {
-    // set up the name of the resulting polynomial
     std::string name = "(" + p.get_name() + " - " + q.get_name() + ")";
 
-    // ensure that both vectors are of equal size
-    std::vector<double> coeffs1 = p.get();
-    std::vector<double> coeffs2 = q.get();
-    int degree = std::max(p.degree(), q.degree());
-    coeffs1.resize(degree + 1);
-    coeffs2.resize(degree + 1);
+    std::vector<double> const& coeffs_p = p.get();
+    std::vector<double> const& coeffs_q = q.get();
+    int min_degree = std::min(p.degree(), q.degree());
+    int max_degree = std::max(p.degree(), q.degree());
+    std::vector<double> coeffs(max_degree + 1);
 
-    // set up the vector for the coefficients of the result
-    std::vector<double> coeffs(degree + 1);
-    for(int i = 0; i <= degree; ++i)
+    int i = 0;
+    for(; i <= min_degree; ++i)
     {
-        coeffs[i] = coeffs1[i] - coeffs2[i];
+        coeffs[i] = coeffs_p[i] - coeffs_q[i];
     }
-    Polynomial result(coeffs, name);
+    for(; i <= p.degree(); ++i)
+    {
+        coeffs[i] = coeffs_p[i];
+    }
+    for(; i <= q.degree(); ++i)
+    {
+        coeffs[i] = -coeffs_q[i];
+    }
 
-    return result;
+    return Polynomial(coeffs, name);
 }
 
 /*-----------------------------------------------------------------------------
-Define polynomial multiplication. The coefficient vector of the product of two
-polynomials is the convolution of their coefficient vectors.
+Define polynomial multiplication.
+
+When a polynomial and a mathematical constant are multiplied, the coefficients
+of the resulting polynomial are obtained by multiplying the coefficients of the
+multiplicand polynomial by the multiplying factor.
+
+The coefficients of the product of two polynomials is obtained by performing
+linear convolution on the coefficients of the two polynomials.
 -----------------------------------------------------------------------------*/
+Polynomial operator*(Polynomial const& p, double f)
+{
+    std::string name = "(" + p.get_name() + " * " + std::to_string(f) + ")";
+    std::vector<double> coeffs = p.get();
+    for(double& d: coeffs)
+    {
+        d *= f;
+    }
+
+    return Polynomial(coeffs, name);
+}
+
+Polynomial operator*(double f, Polynomial const& p)
+{
+    std::string name = "(" + std::to_string(f) + " * " + p.get_name() + ")";
+    std::vector<double> coeffs = p.get();
+    for(double& d: coeffs)
+    {
+        d *= f;
+    }
+
+    return Polynomial(coeffs, name);
+}
+
 Polynomial operator*(Polynomial const& p, Polynomial const& q)
 {
-    // set up the name of the resulting polynomial
     std::string name = "(" + p.get_name() + " * " + q.get_name() + ")";
 
-    std::vector<double> coeffs1 = p.get();
-    std::vector<double> coeffs2 = q.get();
-    int psize = coeffs1.size();
-    int qsize = coeffs2.size();
+    std::vector<double> const& coeffs_p = p.get();
+    std::vector<double> const& coeffs_q = q.get();
+    int psize = coeffs_p.size();
+    int qsize = coeffs_q.size();
 
-    // set up the vector for the coefficients of the result
     std::vector<double> coeffs(psize + qsize - 1, 0);
     for(int n = 0; n < psize + qsize - 1; ++n)
     {
@@ -295,31 +396,27 @@ Polynomial operator*(Polynomial const& p, Polynomial const& q)
                 continue;
             }
 
-            coeffs[n] += coeffs1[k] * coeffs2[n - k];
+            coeffs[n] += coeffs_p[k] * coeffs_q[n - k];
         }
     }
-    Polynomial result(coeffs, name);
 
-    return result;
+    return Polynomial(coeffs, name);
 }
 
 /*-----------------------------------------------------------------------------
-Define the division of a polynomial by a mathematical constant. This isn't
-polynomial division proper.
+Define the division of a polynomial by a mathematical constant. Division of a
+constant by a polynomial and division of a polynomial by a polynomial are not
+implemented. (They are not required. For now.)
 -----------------------------------------------------------------------------*/
 Polynomial operator/(Polynomial const& p, double f)
 {
-    // set up the name of the resulting polynomial
     std::string name = "(" + p.get_name() + " / " + std::to_string(f) + ")";
-
-    // set up the vector for the coefficients of the result
     std::vector<double> coeffs = p.get();
-    for(int i = 0; i <= p.degree(); ++i)
+    for(double& d: coeffs)
     {
-        coeffs[i] /= f;
+        d /= f;
     }
-    Polynomial result(coeffs, name);
 
-    return result;
+    return Polynomial(coeffs, name);
 }
 
