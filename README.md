@@ -19,8 +19,9 @@ the program should output the polynomial coefficients:
 <br>
 98751, −205730.25, 144011.875, −41146.25, 4114.625
 <br>
-which allows you to claim, with proof (take that, IAS interviewers), that the next term in the sequence
+which allows you to claim, with proof (IAS interviewers won't like this), that the next term in the sequence
 <br>
 1, 2, 3, 4
 <br>
-is 98756. Sounds pretty dope to me!
+is 98756.
+
