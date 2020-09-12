@@ -27,11 +27,17 @@ is 98756.
 
 # input format example
 5
+<br>
 1 1
+<br>
 2 2
+<br>
 3 3
+<br>
 4 4
+<br>
 5 98756
+<br>
 6
 
 # usage
