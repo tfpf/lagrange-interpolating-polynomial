@@ -2,6 +2,8 @@
 #include <fstream>
 #include <iostream>
 #include <iterator>
+#include <set>
+#include <stdexcept>
 #include <vector>
 
 #include "pstl.cpp"
@@ -14,18 +16,25 @@ required, it is easier to understand and debug the code, because the code
 expressions resemble the mathematical expressions.
 
 Args:
-    x: vector (abscissae of the points over which interpolation is to be done)
-    y: vector (ordinates of the points over which interpolation is to be done)
+    x: vector (x-coordinates of the points to be interpolated between)
+    y: vector (y-coordinates of the points to be interpolated between)
 
 Returns:
     Polynomial object which describes the interpolating polynomial
 -----------------------------------------------------------------------------*/
 Polynomial interpolate(std::vector<double> const& x, std::vector<double> const& y)
 {
-    // sanity
+    // sanity 1
     if(x.size() <= 1 || y.size() <= 1)
     {
-        return Polynomial();
+        throw std::invalid_argument("At least two points are required for interpolation.");
+    }
+
+    // sanity 2
+    std::set<double> s(x.begin(), x.end());
+    if(s.size() != x.size())
+    {
+        throw std::invalid_argument("Interpolating points must have unique x-coordinates.");
     }
 
     // if the vectors are of different lengths, extra coordinates are ignored
@@ -44,10 +53,9 @@ Polynomial interpolate(std::vector<double> const& x, std::vector<double> const& 
 
             local = local * Polynomial({-x[k], 1}) / (-x[k] + x[j]);
         }
-
         result = result + local;
     }
-    result.set_name("interpolating_polynomial");
+    result.set_name("ip(x)");
 
     return result;
 }
@@ -76,25 +84,23 @@ int main(int const argc, char const **argv)
     // read the number of points in the file
     int num_points;
     infile >> num_points;
-    std::vector<double> x(num_points);
-    std::vector<double> y(num_points);
+    std::vector<double> x(num_points), y(num_points);
 
     // read the coordinates of the points into vectors
+    for(int i = 0; i < num_points; ++i)
+    {
+        infile >> x[i];
+        infile >> y[i];
+    }
+
+    // read final coordinate at which the polynomial has to be evaluated
     double coord;
-    for(int i = 0; i < num_points; ++i)
-    {
-        infile >> coord;
-        x[i] = coord;
-    }
-    for(int i = 0; i < num_points; ++i)
-    {
-        infile >> coord;
-        y[i] = coord;
-    }
+    infile >> coord;
 
     // magic
     Polynomial c = interpolate(x, y);
     c.print();
+    std::cout << c.get_name() << " = " << c.evaluate(coord) << " when x = " << coord << "\n";
 
     return 0;
 }
