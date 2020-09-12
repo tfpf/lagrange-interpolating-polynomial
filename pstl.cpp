@@ -25,7 +25,7 @@ Methods:
     Polynomial: constructor
     sanitise: remove trailing zeros from the coefficient vector
     print: display the polynomial
-    set_name: set the polynomial name
+    set_name: set the polynomial name to the user-provided string
     get_name: get the polynomial name
     set: set the coefficient vector to the user-provided vector
     get: get the coefficient vector
@@ -62,11 +62,14 @@ Polynomial::Polynomial()
 /*-----------------------------------------------------------------------------
 Constructor. Sets the name of the polynomial to a generic polynomial-looking
 name and initialises the coefficient vector to the user-provided vector.
+
+Args:
+    coeffs: vector (coefficients of the polynomial)
 -----------------------------------------------------------------------------*/
 Polynomial::Polynomial(std::vector<double> coeffs)
     : name("p(x)"), coeffs(coeffs)
 {
-    this->sanitise();
+    sanitise();
 }
 
 /*-----------------------------------------------------------------------------
@@ -75,12 +78,12 @@ has provided.
 
 Args:
     name: string (symbol or group of symbols used to represent the polynomial)
-    coeffs: vector (coefficients of the polynomial, ordered as described above)
+    coeffs: vector (coefficients of the polynomial)
 -----------------------------------------------------------------------------*/
 Polynomial::Polynomial(std::vector<double> coeffs, std::string name)
     : name(name), coeffs(coeffs)
 {
-    this->sanitise();
+    sanitise();
 }
 
 /*-----------------------------------------------------------------------------
@@ -126,7 +129,7 @@ void Polynomial::print(void) const
     std::cout << name << " = [";
     for(auto i = coeffs.begin(); i != coeffs.end(); ++i)
     {
-        std::cout << std::setprecision(15) << *i << ", ";
+        std::cout << std::setprecision(12) << *i << ", ";
     }
     std::cout << "]\n";
 }
