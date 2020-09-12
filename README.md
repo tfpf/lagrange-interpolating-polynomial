@@ -25,3 +25,23 @@ which allows you to claim, with proof (IAS interviewers won't like this), that t
 <br>
 is 98756.
 
+# input format example
+5
+1 1
+2 2
+3 3
+4 4
+5 98756
+6
+
+# usage
+
+- You must install `g++` to run this program.
+- Download the files to your computer.
+- Open a terminal window where you downloaded the files.
+- Enter the coordinates of the points in the file 'input.txt' (the input format is as explained above).
+  - The first line is the number of points.
+  - Those many following lines are populated with two numbers per line, such that the first specifies the x-coordinate, and the second, the y-coordinate.
+  - On the last line, the point at which the interpolating polynomial is to be evaluated is mentioned.
+- In the terminal, enter the command `make run`.
+
