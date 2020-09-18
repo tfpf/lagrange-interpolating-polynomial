@@ -100,7 +100,9 @@ int main(int const argc, char const **argv)
     // magic
     Polynomial c = interpolate(x, y);
     c.print();
-    std::cout << c.get_name() << " = " << c.evaluate(coord) << " when x = " << coord << "\n";
+    std::cout << "when x = " << coord;
+    std::cout << ", ";
+    std::cout << c.get_name() << " = " << c.evaluate(coord) << "\n";
 
     return 0;
 }
