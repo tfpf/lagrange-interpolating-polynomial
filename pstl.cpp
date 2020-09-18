@@ -37,14 +37,14 @@ class Polynomial
     private: std::string name;
     private: std::vector<double> coeffs;
 
-    public: Polynomial();
-    public: Polynomial(std::vector<double>);
-    public: Polynomial(std::vector<double>, std::string);
+    public: Polynomial(void);
+    public: Polynomial(std::vector<double> const&);
+    public: Polynomial(std::vector<double> const&, std::string const&);
     public: void sanitise(void);
     public: void print(void) const;
-    public: void set_name(std::string);
+    public: void set_name(std::string const&);
     public: std::string get_name(void) const;
-    public: void set(std::vector<double>);
+    public: void set(std::vector<double> const&);
     public: std::vector<double> get(void) const;
     public: double evaluate(double) const;
     public: int degree(void) const;
@@ -54,7 +54,7 @@ class Polynomial
 Constructor. Sets the name of the polynomial to a generic polynomial-looking
 name and initialises the coefficient vector to an empty vector.
 -----------------------------------------------------------------------------*/
-Polynomial::Polynomial()
+Polynomial::Polynomial(void)
     : name("p(x)"), coeffs({})
 {
 }
@@ -66,7 +66,7 @@ name and initialises the coefficient vector to the user-provided vector.
 Args:
     coeffs: vector (coefficients of the polynomial)
 -----------------------------------------------------------------------------*/
-Polynomial::Polynomial(std::vector<double> coeffs)
+Polynomial::Polynomial(std::vector<double> const& coeffs)
     : name("p(x)"), coeffs(coeffs)
 {
     sanitise();
@@ -80,7 +80,7 @@ Args:
     name: string (symbol or group of symbols used to represent the polynomial)
     coeffs: vector (coefficients of the polynomial)
 -----------------------------------------------------------------------------*/
-Polynomial::Polynomial(std::vector<double> coeffs, std::string name)
+Polynomial::Polynomial(std::vector<double> const& coeffs, std::string const& name)
     : name(name), coeffs(coeffs)
 {
     sanitise();
@@ -144,7 +144,7 @@ name can be left unchanged.)
 Args:
     name: string (to set the polynomial name)
 -----------------------------------------------------------------------------*/
-void Polynomial::set_name(std::string name)
+void Polynomial::set_name(std::string const& name)
 {
     this->name = name;
 }
@@ -170,7 +170,7 @@ the previously used memory.
 Args:
     coeffs: vector (coefficients to be set)
 -----------------------------------------------------------------------------*/
-void Polynomial::set(std::vector<double> coeffs)
+void Polynomial::set(std::vector<double> const& coeffs)
 {
     std::vector<double>().swap(this->coeffs);
     this->coeffs = coeffs;
