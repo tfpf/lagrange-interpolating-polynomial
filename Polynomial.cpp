@@ -1,10 +1,8 @@
 #include <algorithm>
 #include <cmath>
-#include <iomanip>
 #include <iostream>
 #include <iterator>
 #include <string>
-#include <utility>
 #include <vector>
 
 /*-----------------------------------------------------------------------------
@@ -24,28 +22,32 @@ Members:
 Methods:
     Polynomial: constructor
     sanitise: remove trailing zeros from the coefficient vector
-    print: display the polynomial
+    print: display the coefficients of the polynomial
+    print_rational: like `print', but display rational approximations
     set_name: set the polynomial name to the user-provided string
     get_name: get the polynomial name
-    set: set the coefficient vector to the user-provided vector
-    get: get the coefficient vector
+    set_coeffs: set the coefficient vector to the user-provided vector
+    get_coeffs: get the coefficient vector
     evaluate: evaluate the polynomial at a certain point
     degree: get the degree of the polynomial
 -----------------------------------------------------------------------------*/
 class Polynomial
 {
-    private: std::string name;
+    // members
     private: std::vector<double> coeffs;
+    private: std::string name;
 
+    // methods
     public: Polynomial(void);
     public: Polynomial(std::vector<double> const&);
     public: Polynomial(std::vector<double> const&, std::string const&);
     public: void sanitise(void);
     public: void print(void) const;
+    public: void print_rational(void) const;
     public: void set_name(std::string const&);
     public: std::string get_name(void) const;
-    public: void set(std::vector<double> const&);
-    public: std::vector<double> get(void) const;
+    public: void set_coeffs(std::vector<double> const&);
+    public: std::vector<double> get_coeffs(void) const;
     public: double evaluate(double) const;
     public: int degree(void) const;
 };
@@ -55,7 +57,7 @@ Constructor. Sets the name of the polynomial to a generic polynomial-looking
 name and initialises the coefficient vector to an empty vector.
 -----------------------------------------------------------------------------*/
 Polynomial::Polynomial(void)
-    : name("p(x)"), coeffs({})
+    : coeffs({}), name("p")
 {
 }
 
@@ -67,7 +69,7 @@ Args:
     coeffs: vector (coefficients of the polynomial)
 -----------------------------------------------------------------------------*/
 Polynomial::Polynomial(std::vector<double> const& coeffs)
-    : name("p(x)"), coeffs(coeffs)
+    : coeffs(coeffs), name("p")
 {
     sanitise();
 }
@@ -81,7 +83,7 @@ Args:
     coeffs: vector (coefficients of the polynomial)
 -----------------------------------------------------------------------------*/
 Polynomial::Polynomial(std::vector<double> const& coeffs, std::string const& name)
-    : name(name), coeffs(coeffs)
+    : coeffs(coeffs), name(name)
 {
     sanitise();
 }
@@ -129,7 +131,21 @@ void Polynomial::print(void) const
     std::cout << name << " = [";
     for(auto i = coeffs.begin(); i != coeffs.end(); ++i)
     {
-        std::cout << std::setprecision(12) << *i << ", ";
+        std::cout << *i << ", ";
+    }
+    std::cout << "]\n";
+}
+
+/*-----------------------------------------------------------------------------
+Display the nearest rational approximations of each of the coefficients of the
+polynomial. TODO
+-----------------------------------------------------------------------------*/
+void Polynomial::print_rational(void) const
+{
+    std::cout << name << " = [";
+    for(auto i = coeffs.begin(); i != coeffs.end(); ++i)
+    {
+        std::cout << *i << ", ";
     }
     std::cout << "]\n";
 }
@@ -140,6 +156,10 @@ polynomial has been set automatically after a mathematical operation. There is
 no way for the program to know the name of the variable used for the polynomial
 object, so the user must supply the name. (Otherwise, the automatically set
 name can be left unchanged.)
+
+Note to self
+There is no need to deallocate the previous name, because `std::string' handles
+memory allocation and deallocation for the programmer.
 
 Args:
     name: string (to set the polynomial name)
@@ -167,25 +187,26 @@ Set the vector of the coefficients of the polynomial. Before doing this, the
 existing vector is swapped with an unallocated vector, effectively deallocating
 the previously used memory.
 
+Note to self
+There is no need to deallocate the previous vector, because `std::vector'
+handles memory allocation and deallocation for the programmer.
+
 Args:
     coeffs: vector (coefficients to be set)
 -----------------------------------------------------------------------------*/
-void Polynomial::set(std::vector<double> const& coeffs)
+void Polynomial::set_coeffs(std::vector<double> const& coeffs)
 {
-    std::vector<double>().swap(this->coeffs);
     this->coeffs = coeffs;
     this->sanitise();
 }
 
 /*-----------------------------------------------------------------------------
-Obtain the vector of the coefficients of the polynomial. I don't expect to use
-this function much. It is written primarily for completeness (there is already
-a `set' method) and for debugging.
+Obtain the vector of the coefficients of the polynomial.
 
 Returns:
     vector of coefficients
 -----------------------------------------------------------------------------*/
-std::vector<double> Polynomial::get(void) const
+std::vector<double> Polynomial::get_coeffs(void) const
 {
     return coeffs;
 }
@@ -247,15 +268,12 @@ The name of the resulting polynomial will be a combination of the entities
 being added. Brackets will enclose this combination, because, after repeated
 mathematical operations, the name may not match the value because of operator
 precedence.
-
-TODO At the moment, the addition of two polynomials is implemented in a very
-clumsy manner, though it is the best I could come up with right now. Improve
-that logic later.
 -----------------------------------------------------------------------------*/
 Polynomial operator+(Polynomial const& p, double f)
 {
     std::string name = "(" + p.get_name() + " + " + std::to_string(f) + ")";
-    std::vector<double> coeffs = p.get();
+
+    std::vector<double> coeffs = p.get_coeffs();
     if(p.degree() == -1)
     {
         coeffs.push_back(0);
@@ -268,7 +286,8 @@ Polynomial operator+(Polynomial const& p, double f)
 Polynomial operator+(double f, Polynomial const& p)
 {
     std::string name = "(" + std::to_string(f) + " + " + p.get_name() + ")";
-    std::vector<double> coeffs = p.get();
+
+    std::vector<double> coeffs = p.get_coeffs();
     if(p.degree() == -1)
     {
         coeffs.push_back(0);
@@ -282,14 +301,11 @@ Polynomial operator+(Polynomial const& p, Polynomial const& q)
 {
     std::string name = "(" + p.get_name() + " + " + q.get_name() + ")";
 
-    std::vector<double> const& coeffs_p = p.get();
-    std::vector<double> const& coeffs_q = q.get();
-    int min_degree = std::min(p.degree(), q.degree());
-    int max_degree = std::max(p.degree(), q.degree());
-    std::vector<double> coeffs(max_degree + 1);
-
+    std::vector<double> const& coeffs_p = p.get_coeffs();
+    std::vector<double> const& coeffs_q = q.get_coeffs();
+    std::vector<double> coeffs(std::max(p.degree(), q.degree()) + 1);
     int i = 0;
-    for(; i <= min_degree; ++i)
+    for(; i <= std::min(p.degree(), q.degree()); ++i)
     {
         coeffs[i] = coeffs_p[i] + coeffs_q[i];
     }
@@ -311,7 +327,8 @@ Define polynomial subtraction. Same rules as addition apply.
 Polynomial operator-(Polynomial const& p, double f)
 {
     std::string name = "(" + p.get_name() + " - " + std::to_string(f) + ")";
-    std::vector<double> coeffs = p.get();
+
+    std::vector<double> coeffs = p.get_coeffs();
     if(p.degree() == -1)
     {
         coeffs.push_back(0);
@@ -324,7 +341,8 @@ Polynomial operator-(Polynomial const& p, double f)
 Polynomial operator-(double f, Polynomial const& p)
 {
     std::string name = "(" + std::to_string(f) + " - " + p.get_name() + ")";
-    std::vector<double> coeffs = p.get();
+
+    std::vector<double> coeffs = p.get_coeffs();
     std::transform(coeffs.begin(), coeffs.end(), coeffs.begin(), std::negate<double>());
     if(coeffs.size() == 0)
     {
@@ -339,14 +357,11 @@ Polynomial operator-(Polynomial const& p, Polynomial const& q)
 {
     std::string name = "(" + p.get_name() + " - " + q.get_name() + ")";
 
-    std::vector<double> const& coeffs_p = p.get();
-    std::vector<double> const& coeffs_q = q.get();
-    int min_degree = std::min(p.degree(), q.degree());
-    int max_degree = std::max(p.degree(), q.degree());
-    std::vector<double> coeffs(max_degree + 1);
-
+    std::vector<double> const& coeffs_p = p.get_coeffs();
+    std::vector<double> const& coeffs_q = q.get_coeffs();
+    std::vector<double> coeffs(std::max(p.degree(), q.degree()) + 1);
     int i = 0;
-    for(; i <= min_degree; ++i)
+    for(; i <= std::min(p.degree(), q.degree()); ++i)
     {
         coeffs[i] = coeffs_p[i] - coeffs_q[i];
     }
@@ -375,7 +390,8 @@ linear convolution on the coefficients of the two polynomials.
 Polynomial operator*(Polynomial const& p, double f)
 {
     std::string name = "(" + p.get_name() + " * " + std::to_string(f) + ")";
-    std::vector<double> coeffs = p.get();
+
+    std::vector<double> coeffs = p.get_coeffs();
     for(double& d: coeffs)
     {
         d *= f;
@@ -387,7 +403,8 @@ Polynomial operator*(Polynomial const& p, double f)
 Polynomial operator*(double f, Polynomial const& p)
 {
     std::string name = "(" + std::to_string(f) + " * " + p.get_name() + ")";
-    std::vector<double> coeffs = p.get();
+
+    std::vector<double> coeffs = p.get_coeffs();
     for(double& d: coeffs)
     {
         d *= f;
@@ -400,18 +417,15 @@ Polynomial operator*(Polynomial const& p, Polynomial const& q)
 {
     std::string name = "(" + p.get_name() + " * " + q.get_name() + ")";
 
-    std::vector<double> const& coeffs_p = p.get();
-    std::vector<double> const& coeffs_q = q.get();
-    int psize = coeffs_p.size();
-    int qsize = coeffs_q.size();
-
-    std::vector<double> coeffs(psize + qsize - 1, 0);
-    for(int n = 0; n < psize + qsize - 1; ++n)
+    std::vector<double> const& coeffs_p = p.get_coeffs();
+    std::vector<double> const& coeffs_q = q.get_coeffs();
+    std::vector<double> coeffs(p.degree() + q.degree() + 1, 0);
+    for(int n = 0; n <= p.degree() + q.degree(); ++n)
     {
         for(int k = 0; k <= n; ++k)
         {
             // included redundancy in this check to make bound check obvious
-            if(k < 0 || k >= psize || n - k < 0 || n - k >= qsize)
+            if(k < 0 || k > p.degree() || n - k < 0 || n - k > q.degree())
             {
                 continue;
             }
@@ -431,12 +445,71 @@ implemented. (They are not required. For now.)
 Polynomial operator/(Polynomial const& p, double f)
 {
     std::string name = "(" + p.get_name() + " / " + std::to_string(f) + ")";
-    std::vector<double> coeffs = p.get();
+
+    std::vector<double> coeffs = p.get_coeffs();
     for(double& d: coeffs)
     {
         d /= f;
     }
 
     return Polynomial(coeffs, name);
+}
+
+/*-----------------------------------------------------------------------------
+Given two vectors, generate the interpolating polynomial on which all the
+points represented by those vectors lie. A Lagrange Interpolating Polynomial
+is built using the given points. Although it may increase the processing
+required, it is easier to understand and debug the code, because the code
+expressions resemble the mathematical expressions.
+
+Note to self
+The assignments used in the nested `for' loop in this function will not cause a
+memory leak because the constructors and destructors added automatically will
+take care of memory alocation and deallocation. You can confirm this using
+Valgrind; you'll see that no heap memory is in use at the end of the program.
+
+Args:
+    x: vector (x-coordinates of the points to be interpolated between)
+    y: vector (y-coordinates of the points to be interpolated between)
+
+Returns:
+    Polynomial object which describes the interpolating polynomial
+-----------------------------------------------------------------------------*/
+Polynomial interpolate(std::vector<double> const& x, std::vector<double> const& y)
+{
+    // sanity 1
+    if(x.size() <= 1 || y.size() <= 1)
+    {
+        throw std::invalid_argument("At least two points are required for interpolation.");
+    }
+
+    // sanity 2
+    std::set<double> s(x.begin(), x.end());
+    if(s.size() != x.size())
+    {
+        throw std::invalid_argument("Interpolating points must have unique x-coordinates.");
+    }
+
+    // if the vectors are of different lengths, extra coordinates are ignored
+    int num_points = std::min(x.size(), y.size());
+
+    Polynomial result;
+    for(int j = 0; j < num_points; ++j)
+    {
+        Polynomial local({y[j]});
+        for(int k = 0; k < num_points; ++k)
+        {
+            if(k == j)
+            {
+                continue;
+            }
+
+            local = local * Polynomial({-x[k], 1}) / (-x[k] + x[j]);
+        }
+        result = result + local;
+    }
+    result.set_name("ip");
+
+    return result;
 }
 
