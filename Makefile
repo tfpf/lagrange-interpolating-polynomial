@@ -8,7 +8,7 @@ Binary = main
 input = input.txt
 
 
-.PHONY: clean comp exec run all
+.PHONY: comp exec run
 
 
 comp:
