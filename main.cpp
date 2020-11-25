@@ -6,7 +6,7 @@
 #include <stdexcept>
 #include <vector>
 
-#include "pstl.cpp"
+#include "Polynomial.cpp"
 
 /*-----------------------------------------------------------------------------
 Given two vectors, generate the interpolating polynomial on which all the

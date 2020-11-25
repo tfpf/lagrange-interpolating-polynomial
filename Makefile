@@ -1,32 +1,21 @@
 SHELL  = /bin/sh
 CC     = g++
-CFLAGS = -O2
-STD    = -std=c++11
-WFLAGS = -Wall -Wextra
+CFLAGS = -O2 -std=c++11 -Wall -Wextra
 
-Source   = main.cpp
-Assembly = main.s
-Binary   = main.elf
+Source = main.cpp
+Binary = main
 
 input = input.txt
 
 
-.PHONY: clean asm comp exec run all
+.PHONY: clean comp exec run all
 
-
-clean:
-	$(RM) $(Binary) $(Assembly)
-
-asm:
-	$(CC) $(CFLAGS) $(STD) $(WFLAGS) -S -o $(Assembly) $(Source)
 
 comp:
-	$(CC) $(CFLAGS) $(STD) $(WFLAGS) -o $(Binary) $(Source)
+	$(CC) $(CFLAGS) -o $(Binary) $(Source)
 
 exec:
 	./$(Binary) $(input)
 
 run: comp exec
-
-all: asm comp exec
 
