@@ -1,6 +1,6 @@
 SHELL  = /bin/sh
 CC     = g++
-CFLAGS = -O2 -std=c++11 -Wall -Wextra
+CFLAGS = -ggdb3 -O2 -std=c++11 -Wall -Wextra
 
 Source = main.cpp
 Binary = main
