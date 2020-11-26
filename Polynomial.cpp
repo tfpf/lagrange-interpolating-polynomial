@@ -486,14 +486,15 @@ std::string rationalise(double real, int long max_denominator)
 
     // obtain a rational approximation with a large denominator
     // if, after removing the GCD, the denominator is small, that's the answer
-    int long d = 1e17;
+    // use `long int' (otherwise, `real * d' may cause integer overflow)
+    int long d = 1e15;
     int long n = real * d;
     int long g = std::gcd(n, d);
     n /= g;
     d /= g;
     if(d <= max_denominator)
     {
-        return std::to_string(n) + "/" + std::to_string(d);
+        return sign + std::to_string(n) + "/" + std::to_string(d);
     }
 
     // converge to an approximation with a smaller denominator
