@@ -6,6 +6,17 @@
 #include <vector>
 
 /*-----------------------------------------------------------------------------
+Class declaration.
+-----------------------------------------------------------------------------*/
+class Polynomial;
+
+/*-----------------------------------------------------------------------------
+Function prototypes.
+-----------------------------------------------------------------------------*/
+std::string rationalise(double real, int long max_denominator = 1000000);
+Polynomial interpolate(std::vector<double> const& x, std::vector<double> const& y);
+
+/*-----------------------------------------------------------------------------
 A class to store a polynomial. The polynomial is stored in terms of its
 coefficients. For instance, if the polynomial is
     12.8x^5 - 1.62x^2 + 33x - 7.31
@@ -23,7 +34,6 @@ Methods:
     Polynomial: constructor
     sanitise: remove trailing zeros from the coefficient vector
     print: display the coefficients of the polynomial
-    print_rational: like `print', but display rational approximations
     set_name: set the polynomial name to the user-provided string
     get_name: get the polynomial name
     set_coeffs: set the coefficient vector to the user-provided vector
@@ -43,7 +53,6 @@ class Polynomial
     public: Polynomial(std::vector<double> const&, std::string const&);
     public: void sanitise(void);
     public: void print(void) const;
-    public: void print_rational(void) const;
     public: void set_name(std::string const&);
     public: std::string get_name(void) const;
     public: void set_coeffs(std::vector<double> const&);
@@ -131,21 +140,7 @@ void Polynomial::print(void) const
     std::cout << name << " = [";
     for(auto i = coeffs.begin(); i != coeffs.end(); ++i)
     {
-        std::cout << *i << ", ";
-    }
-    std::cout << "]\n";
-}
-
-/*-----------------------------------------------------------------------------
-Display the nearest rational approximations of each of the coefficients of the
-polynomial. TODO
------------------------------------------------------------------------------*/
-void Polynomial::print_rational(void) const
-{
-    std::cout << name << " = [";
-    for(auto i = coeffs.begin(); i != coeffs.end(); ++i)
-    {
-        std::cout << *i << ", ";
+        std::cout << rationalise(*i) << ", ";
     }
     std::cout << "]\n";
 }
@@ -453,6 +448,91 @@ Polynomial operator/(Polynomial const& p, double f)
     }
 
     return Polynomial(coeffs, name);
+}
+
+/*-----------------------------------------------------------------------------
+Approximate a real number as a rational number with a small denominator. Much
+of this code is copied from that of the `limit_denominator' method of the
+Python class `fractions.Fraction'.
+
+Note to self
+If an `std::string' is not explicitly initialised, its default constructor is
+called; it is automatically initialised as an empty string.
+
+Args:
+    real: double (the number to approximate)
+    max_denominator: int long (maximum denominator the approximation may have)
+
+Returns:
+    rational approximation to the given number written as a string
+-----------------------------------------------------------------------------*/
+std::string rationalise(double real, int long max_denominator)
+{
+    // if the number is an integer (as best as can be told), return the integer
+    int real_to_int = static_cast<int>(real);
+    if(real_to_int == real)
+    {
+        return std::to_string(real_to_int);
+    }
+
+    // separate the sign of `real' from its magnitude
+    // this allows the algorithm to focus on positive values
+    std::string sign;
+    if(real < 0)
+    {
+        sign = "-";
+    }
+    real = std::abs(real);
+
+    // obtain a rational approximation with a large denominator
+    // if, after removing the GCD, the denominator is small, that's the answer
+    int long d = 1e17;
+    int long n = real * d;
+    int long g = std::gcd(n, d);
+    n /= g;
+    d /= g;
+    if(d <= max_denominator)
+    {
+        return std::to_string(n) + "/" + std::to_string(d);
+    }
+
+    // converge to an approximation with a smaller denominator
+    int long p0 = 0, q0 = 1, p1 = 1, q1 = 0;
+    while(1)
+    {
+        int long a = n / d;
+        int long q2 = q0 + a * q1;
+        if(q2 > max_denominator)
+        {
+            break;
+        }
+
+        int long p1_old = p1, q1_old = q1;
+        p1 = p0 + a * p1;
+        q1 = q2;
+        p0 = p1_old;
+        q0 = q1_old;
+
+        int long d_old = d;
+        d = n - a * d;
+        n = d_old;
+    }
+
+    int long k = (max_denominator - q0) / q1;
+    double bound1 = (double)(p0 + k * p1) / (q0 + k * q1);
+    double bound2 = (double)p1 / q1;
+
+    std::string rational;
+    if(std::abs(bound2 - real) <= std::abs(bound1 - real))
+    {
+        rational = sign + std::to_string(p1) + "/" + std::to_string(q1);
+    }
+    else
+    {
+        rational = sign + std::to_string(p0 + k * p1) + "/" + std::to_string(q0 + k * q1);
+    }
+
+    return rational;
 }
 
 /*-----------------------------------------------------------------------------
