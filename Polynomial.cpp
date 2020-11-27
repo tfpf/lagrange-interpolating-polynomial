@@ -568,7 +568,7 @@ expressions resemble the mathematical expressions.
 Note to self
 The assignments used in the nested `for' loop in this function will not cause a
 memory leak because the constructors and destructors added automatically will
-take care of memory alocation and deallocation. You can confirm this using
+take care of memory allocation and deallocation. You can confirm this using
 Valgrind; you'll see that no heap memory is in use at the end of the program.
 
 Args:
