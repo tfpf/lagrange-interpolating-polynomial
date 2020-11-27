@@ -23,34 +23,26 @@ int main(int const argc, char const **argv)
         return 1;
     }
 
-    // read input
+    // Note to self
+    // there is no need to close an `std::ifstream' file
     std::ifstream infile(argv[1]);
     if(!infile)
     {
-        std::cout << "File " << argv[1] << " could not be read.\n";
+        std::cout << "File \'" << argv[1] << "\' could not be read.\n";
         return 2;
     }
 
-    // read the number of points in the file
-    int num_points;
-    infile >> num_points;
-    std::vector<double> x(num_points), y(num_points);
-
-    // read the coordinates of the points into vectors
-    for(int i = 0; i < num_points; ++i)
+    double xcoord, ycoord;
+    std::vector<double> xcoords, ycoords;
+    for(int i = 0; (infile >> xcoord) && (infile >> ycoord); ++i)
     {
-        infile >> x[i];
-        infile >> y[i];
+        xcoords.push_back(xcoord);
+        ycoords.push_back(ycoord);
     }
 
-    // read final coordinate at which the polynomial has to be evaluated
-    double coord;
-    infile >> coord;
-
-    // magic
-    Polynomial c = interpolate(x, y);
-    c.print();
-    std::cout << c.get_name() << "(" << coord << ") = " << c.evaluate(coord) << "\n";
+    Polynomial poly = interpolate(xcoords, ycoords);
+    poly.print();
+    std::cout << poly.get_name() << "(" << xcoord << ") = " << poly.evaluate(xcoord) << "\n";
 
     return 0;
 }

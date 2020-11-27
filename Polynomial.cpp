@@ -448,7 +448,7 @@ Polynomial operator/(Polynomial const& p, double f)
 
 /*-----------------------------------------------------------------------------
 Calculate the greatest common divisor of two integers. This implementation is
-provided because older version of GCC do not provide an implementation of
+provided because older versions of GCC do not provide an implementation of
 `std::gcd', even though they may support the C++17 standard.
 
 Args:
