@@ -507,7 +507,7 @@ std::string rationalise(double real, ilong max_denominator)
 
     // obtain a rational approximation with a large denominator
     // if, after removing the GCD, the denominator is small, that's the answer
-    // if plain `int' is used, `real * d' may result in integer overflow)
+    // if plain `int' is used, `real * d' may result in integer overflow
     // hence, use the `ilong' typedef
     ilong d = 1e12;
     ilong n = real * d;
