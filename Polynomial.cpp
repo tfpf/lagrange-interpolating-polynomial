@@ -1,9 +1,4 @@
-#include <algorithm>
-#include <cmath>
-#include <iostream>
-#include <iterator>
-#include <string>
-#include <vector>
+typedef int long ilong;
 
 /*-----------------------------------------------------------------------------
 Class declaration.
@@ -13,7 +8,8 @@ class Polynomial;
 /*-----------------------------------------------------------------------------
 Function prototypes.
 -----------------------------------------------------------------------------*/
-std::string rationalise(double real, int long max_denominator = 1000000);
+template<typename Type> Type my_gcd(Type m, Type n);
+std::string rationalise(double real, ilong max_denominator = 1000000);
 Polynomial interpolate(std::vector<double> const& x, std::vector<double> const& y);
 
 /*-----------------------------------------------------------------------------
@@ -451,6 +447,31 @@ Polynomial operator/(Polynomial const& p, double f)
 }
 
 /*-----------------------------------------------------------------------------
+Calculate the greatest common divisor of two integers. This implementation is
+provided because older version of GCC do not provide an implementation of
+`std::gcd', even though they may support the C++17 standard.
+
+Args:
+    m: int-like (must be positive)
+    n: int-like (must be positive)
+
+Returns:
+    greatest common divisor of `m' and `n'
+-----------------------------------------------------------------------------*/
+template<typename Type>
+Type my_gcd(Type m, Type n)
+{
+    while(n != 0)
+    {
+        Type t = m % n;
+        m = n;
+        n = t;
+    }
+
+    return m;
+}
+
+/*-----------------------------------------------------------------------------
 Approximate a real number as a rational number with a small denominator. Much
 of this code is copied from that of the `limit_denominator' method of the
 Python class `fractions.Fraction'.
@@ -461,12 +482,12 @@ called; it is automatically initialised as an empty string.
 
 Args:
     real: double (the number to approximate)
-    max_denominator: int long (maximum denominator the approximation may have)
+    max_denominator: int-like (maximum denominator the approximation may have)
 
 Returns:
     rational approximation to the given number written as a string
 -----------------------------------------------------------------------------*/
-std::string rationalise(double real, int long max_denominator)
+std::string rationalise(double real, ilong max_denominator)
 {
     // if the number is an integer (as best as can be told), return the integer
     int real_to_int = static_cast<int>(real);
@@ -487,9 +508,9 @@ std::string rationalise(double real, int long max_denominator)
     // obtain a rational approximation with a large denominator
     // if, after removing the GCD, the denominator is small, that's the answer
     // use `long int' (otherwise, `real * d' may cause integer overflow)
-    int long d = 1e12;
-    int long n = real * d;
-    int long g = std::gcd(n, d);
+    ilong d = 1e12;
+    ilong n = real * d;
+    ilong g = my_gcd(n, d);
     n /= g;
     d /= g;
     if(d <= max_denominator)
@@ -498,28 +519,28 @@ std::string rationalise(double real, int long max_denominator)
     }
 
     // converge to an approximation with a smaller denominator
-    int long p0 = 0, q0 = 1, p1 = 1, q1 = 0;
+    ilong p0 = 0, q0 = 1, p1 = 1, q1 = 0;
     while(1)
     {
-        int long a = n / d;
-        int long q2 = q0 + a * q1;
+        ilong a = n / d;
+        ilong q2 = q0 + a * q1;
         if(q2 > max_denominator)
         {
             break;
         }
 
-        int long p1_old = p1, q1_old = q1;
+        ilong p1_old = p1, q1_old = q1;
         p1 = p0 + a * p1;
         q1 = q2;
         p0 = p1_old;
         q0 = q1_old;
 
-        int long d_old = d;
+        ilong d_old = d;
         d = n - a * d;
         n = d_old;
     }
 
-    int long k = (max_denominator - q0) / q1;
+    ilong k = (max_denominator - q0) / q1;
     double bound1 = (double)(p0 + k * p1) / (q0 + k * q1);
     double bound2 = (double)p1 / q1;
 
