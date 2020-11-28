@@ -24,16 +24,9 @@ int main(int const argc, char const **argv)
     }
 
     bool show_rational = 0;
-    if(argc >= 3)
+    if(argc >= 3 && argv[2][0] == '1')
     {
-        try
-        {
-            show_rational = std::stoi(argv[2]);
-        }
-        catch(std::invalid_argument const& e)
-        {
-            show_rational = 0;
-        }
+        show_rational = 1;
     }
 
     // Note to self
