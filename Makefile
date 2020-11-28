@@ -15,7 +15,7 @@ comp:
 	$(CC) $(CFLAGS) -o $(Binary) $(Source)
 
 exec:
-	./$(Binary) $(input)
+	./$(Binary) $(input) 1
 
 run: comp exec
 

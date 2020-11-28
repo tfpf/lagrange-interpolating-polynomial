@@ -45,15 +45,15 @@ class Polynomial
 
     // methods
     public: Polynomial(void);
-    public: Polynomial(std::vector<double> const&);
-    public: Polynomial(std::vector<double> const&, std::string const&);
+    public: Polynomial(std::vector<double> const& coeffs);
+    public: Polynomial(std::vector<double> const& coeffs, std::string const& name);
     public: void sanitise(void);
-    public: void print(void) const;
-    public: void set_name(std::string const&);
+    public: void print(bool show_rational = 0) const;
+    public: void set_name(std::string const& name);
     public: std::string get_name(void) const;
-    public: void set_coeffs(std::vector<double> const&);
+    public: void set_coeffs(std::vector<double> const& coeffs);
     public: std::vector<double> get_coeffs(void) const;
-    public: double evaluate(double) const;
+    public: double evaluate(double coord) const;
     public: int degree(void) const;
 };
 
@@ -130,13 +130,27 @@ void Polynomial::sanitise(void)
 Display the polynomial as if it were a vector of its coefficients. Use square
 brackets around them to enforce the notion that the order of these numbers is
 significant. (Since a vector in C++ is not the same as a set in maths.)
+
+Args:
+    show_rational: bool (whether coefficients are approximated as rational)
 -----------------------------------------------------------------------------*/
-void Polynomial::print(void) const
+void Polynomial::print(bool show_rational) const
 {
-    std::cout << name << " = [";
+    std::cout << name << " ≡ [";
     for(auto i = coeffs.begin(); i != coeffs.end(); ++i)
     {
-        std::cout << rationalise(*i) << ", ";
+        if(i != coeffs.begin())
+        {
+            std::cout << ", ";
+        }
+
+        if(show_rational)
+        {
+            std::cout << rationalise(*i);
+            continue;
+        }
+
+        std::cout << *i;
     }
     std::cout << "]\n";
 }
@@ -490,7 +504,7 @@ Returns:
 std::string rationalise(double real, ilong max_denominator)
 {
     // if the number is an integer (as best as can be told), return the integer
-    int real_to_int = static_cast<int>(real);
+    ilong real_to_int = static_cast<int>(real);
     if(real_to_int == real)
     {
         return std::to_string(real_to_int);
@@ -516,6 +530,11 @@ std::string rationalise(double real, ilong max_denominator)
     d /= g;
     if(d <= max_denominator)
     {
+        if(d == 1)
+        {
+            return sign + std::to_string(n);
+        }
+
         return sign + std::to_string(n) + "/" + std::to_string(d);
     }
 
@@ -541,21 +560,28 @@ std::string rationalise(double real, ilong max_denominator)
         n = d_old;
     }
 
+    // obtain two bounds
+    // choose the one with the smaller denominator if both are equally accurate
     ilong k = (max_denominator - q0) / q1;
-    double bound1 = (double)(p0 + k * p1) / (q0 + k * q1);
-    double bound2 = (double)p1 / q1;
-
-    std::string rational;
+    double bound1 = static_cast<double>(p0 + k * p1) / (q0 + k * q1);
+    double bound2 = static_cast<double>(p1) / q1;
     if(std::abs(bound2 - real) <= std::abs(bound1 - real))
     {
-        rational = sign + std::to_string(p1) + "/" + std::to_string(q1);
+        n = p1;
+        d = q1;
     }
     else
     {
-        rational = sign + std::to_string(p0 + k * p1) + "/" + std::to_string(q0 + k * q1);
+        n = p0 + k * p1;
+        d = q0 + k * q1;
     }
 
-    return rational;
+    if(d == 1)
+    {
+        return sign + std::to_string(n);
+    }
+
+    return sign + std::to_string(n) + "/" + std::to_string(d);
 }
 
 /*-----------------------------------------------------------------------------
