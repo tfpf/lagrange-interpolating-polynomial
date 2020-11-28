@@ -150,7 +150,7 @@ void Polynomial::print(bool show_rational) const
             continue;
         }
 
-        std::cout << *i;
+        std::cout << std::setprecision(12) << *i;
     }
     std::cout << "]\n";
 }
