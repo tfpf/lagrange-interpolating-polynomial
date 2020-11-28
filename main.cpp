@@ -40,7 +40,7 @@ int main(int const argc, char const **argv)
 
     double xcoord, ycoord;
     std::vector<double> xcoords, ycoords;
-    for(int i = 0; (infile >> xcoord) && (infile >> ycoord); ++i)
+    while((infile >> xcoord) && (infile >> ycoord))
     {
         xcoords.push_back(xcoord);
         ycoords.push_back(ycoord);
