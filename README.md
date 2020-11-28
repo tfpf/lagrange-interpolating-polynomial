@@ -16,47 +16,47 @@ You get the idea. Any logician will tell you that any number can be next in the
 sequence.
 
 # purpose
-
-This program aims to fit a polynomial through a given sequence to produce
-hilarious results. For instance, given the sequence:
+This program fits a polynomial through a given sequence and predicts the next
+term in the sequence. For instance, given the sequence:
 <br>
-1, 2, 3, 4, 98756
+42, 43, 44, 45, 46, 98756
 <br>
 the program should output the polynomial coefficients:
 <br>
-98751, −205730.25, 144011.875, −41146.25, 4114.625
+-98668, 225386.55, -185079.375, 69918.875, -12338.625, 822.575
 <br>
-which allows you to claim, with proof (IAS interviewers won't like this), that
-the next term in the sequence
+which allows you to claim that the next term in the sequence
 <br>
-1, 2, 3, 4
+42, 43, 44, 45, 46
 <br>
-is 98756.
+is 98756. I wonder if this will nonplus the interviewers of the Indian
+Administrative Services examination!
 
 # input format example
-1 1
+1 42
 <br>
-2 2
+2 43
 <br>
-3 3
+3 44
 <br>
-4 4
+4 45
 <br>
-5 98756
+5 46
 <br>
-6
+6 98756
+<br>
+7
 
 # usage
-
 - Install `g++` to compile this program.
-- Download the files to your computer.
-- Open a terminal window where you downloaded the files.
+- Download or clone this repository to some location on your computer.
+- Open a terminal window to that location.
 - Enter the coordinates of the points in the file 'input.txt' (the input format
   is as explained above).
-  - Each line (except the last one) must contain two numbers: the second number
-    is the number appearing in the sequence; the first number is the position
-    the second numbers appears at.
-  - The last line contains the position at which you want to find a term of the
-    sequence.
+  - Each line (except the last one) must contain two numbers: the first is the
+    line number; the second is the number appearing in the sequence.
+  - On the last line, put the position you find a term of the sequence at.
 - In the terminal, enter the command `make run`.
+  - If you enter `make run r=1` instead of just `make run`, the polynomial
+    coefficients will be displayed in rational form.
 
