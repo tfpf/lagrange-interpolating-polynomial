@@ -1,3 +1,6 @@
+#ifndef SEQUENCE_INTERPOLATION_POLYNOMIAL_CPP
+#define SEQUENCE_INTERPOLATION_POLYNOMIAL_CPP
+
 typedef int long ilong;
 
 /*-----------------------------------------------------------------------------
@@ -641,4 +644,6 @@ Polynomial interpolate(std::vector<double> const& x, std::vector<double> const& 
 
     return result;
 }
+
+#endif // SEQUENCE_INTERPOLATION_POLYNOMIAL_CPP
 
