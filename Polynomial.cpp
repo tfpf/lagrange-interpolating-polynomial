@@ -150,10 +150,11 @@ void Polynomial::print(bool show_rational) const
         if(show_rational)
         {
             std::cout << rationalise(*i);
-            continue;
         }
-
-        std::cout << std::setprecision(12) << *i;
+        else
+        {
+            std::cout << std::setprecision(12) << *i;
+        }
     }
     std::cout << "]\n";
 }
@@ -164,10 +165,6 @@ polynomial has been set automatically after a mathematical operation. There is
 no way for the program to know the name of the variable used for the polynomial
 object, so the user must supply the name. (Otherwise, the automatically set
 name can be left unchanged.)
-
-Note to self
-There is no need to deallocate the previous name, because `std::string' handles
-memory allocation and deallocation for the programmer.
 
 Args:
     name: string (to set the polynomial name)
@@ -194,10 +191,6 @@ std::string Polynomial::get_name(void) const
 Set the vector of the coefficients of the polynomial. Before doing this, the
 existing vector is swapped with an unallocated vector, effectively deallocating
 the previously used memory.
-
-Note to self
-There is no need to deallocate the previous vector, because `std::vector'
-handles memory allocation and deallocation for the programmer.
 
 Args:
     coeffs: vector (coefficients to be set)
@@ -493,10 +486,6 @@ Approximate a real number as a rational number with a small denominator. Much
 of this code is copied from that of the `limit_denominator' method of the
 Python class `fractions.Fraction'.
 
-Note to self
-If an `std::string' is not explicitly initialised, its default constructor is
-called; it is automatically initialised as an empty string.
-
 Args:
     real: double (the number to approximate)
     max_denominator: int-like (maximum denominator the approximation may have)
@@ -594,7 +583,6 @@ is built using the given points. Although it may increase the processing
 required, it is easier to understand and debug the code, because the code
 expressions resemble the mathematical expressions.
 
-Note to self
 The assignments used in the nested `for' loop in this function will not cause a
 memory leak because the constructors and destructors added automatically will
 take care of memory allocation and deallocation. You can confirm this using
