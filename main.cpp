@@ -47,9 +47,10 @@ int main(int const argc, char const **argv)
 
     auto begin = std::chrono::steady_clock::now();
     Polynomial poly = interpolate(xcoords, ycoords);
-    poly.print(show_rational);
-    std::cout << poly.get_name() << "(" << xcoord << ") = " << poly.evaluate(xcoord) << "\n";
+    double val = poly.evaluate(xcoord);
     auto end = std::chrono::steady_clock::now();
+    poly.print(show_rational);
+    std::cout << poly.get_name() << "(" << xcoord << ") = " << val << "\n";
     std::cout << "actual time taken: " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << " µs" << "\n";
 
     return 0;
