@@ -12,7 +12,7 @@ class Polynomial;
 Function prototypes.
 -----------------------------------------------------------------------------*/
 template<typename Type> Type my_gcd(Type m, Type n);
-std::string rationalise(double real, ilong max_denominator = 1000000);
+std::string rationalise(double real, ilong max_denominator=1000000);
 Polynomial interpolate(std::vector<double> const& x, std::vector<double> const& y);
 
 /*-----------------------------------------------------------------------------
@@ -51,7 +51,7 @@ class Polynomial
     public: Polynomial(std::vector<double> const& coeffs);
     public: Polynomial(std::vector<double> const& coeffs, std::string const& name);
     public: void sanitise(void);
-    public: void print(bool show_rational = 0) const;
+    public: void print(bool show_rational=false) const;
     public: void set_name(std::string const& name);
     public: std::string get_name(void) const;
     public: void set_coeffs(std::vector<double> const& coeffs);

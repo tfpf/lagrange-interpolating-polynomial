@@ -24,11 +24,7 @@ int main(int const argc, char const **argv)
         return 1;
     }
 
-    bool show_rational = 0;
-    if(argc >= 3 && argv[2][0] == '1')
-    {
-        show_rational = 1;
-    }
+    bool show_rational = (argc >= 3 && argv[2][0] == '1') ? true : false;
 
     std::ifstream infile(argv[1]);
     if(!infile)
