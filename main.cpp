@@ -1,20 +1,13 @@
-#include <algorithm>
 #include <chrono>
-#include <cmath>
 #include <fstream>
-#include <iomanip>
 #include <iostream>
-#include <iterator>
-#include <set>
-#include <stdexcept>
-#include <string>
 #include <vector>
 
 #include "Polynomial.cpp"
 
-/*-----------------------------------------------------------------------------
-The main function.
------------------------------------------------------------------------------*/
+/******************************************************************************
+ * Main function.
+ *****************************************************************************/
 int main(int const argc, char const **argv)
 {
     if(argc < 2)
@@ -51,4 +44,3 @@ int main(int const argc, char const **argv)
 
     return 0;
 }
-
