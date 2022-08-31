@@ -6,19 +6,104 @@
 #include <iomanip>
 #include <iostream>
 #include <iterator>
+#include <numeric>
 #include <set>
 #include <stdexcept>
 #include <string>
 #include <vector>
 
-typedef int long ilong;
+typedef int long long ll;
 
-class Polynomial;
+/******************************************************************************
+ * Approximate a real number as a rational number with a small denominator.
+ * Much of this code is copied from that of the `limit_denominator` method of
+ * the Python class `fractions.Fraction`.
+ *
+ * @param real Number to approximate.
+ * @param max_denominator Maximum denominator the approximation may have.
+ *
+ * @return Rational approximation of `real`.
+ *****************************************************************************/
+std::string rationalise(double real, ll max_denominator=1000000)
+{
+    ll real_to_int = static_cast<int>(real);
+    if(real_to_int == real)
+    {
+        return std::to_string(real_to_int);
+    }
 
-// Function prototypes.
-template<typename Type> Type my_gcd(Type m, Type n);
-std::string rationalise(double real, ilong max_denominator=1000000);
-Polynomial interpolate(std::vector<double> const& x, std::vector<double> const& y);
+    // Separate the sign of `real` from its magnitude. This allows the
+    // algorithm to focus on positive values.
+    std::string sign;
+    if(real < 0)
+    {
+        sign = "-";
+    }
+    real = std::abs(real);
+
+    // Obtain a rational approximation with a large denominator. If the
+    // denominator is small after removing the GCD, that's the answer.
+    // `ll` is used because `int` may overflow.
+    ll d = 1e12;
+    ll n = real * d;
+    ll g = std::gcd(n, d);
+    n /= g;
+    d /= g;
+    if(d <= max_denominator)
+    {
+        if(d == 1)
+        {
+            return sign + std::to_string(n);
+        }
+
+        return sign + std::to_string(n) + "/" + std::to_string(d);
+    }
+
+    // Converge to an approximation with a smaller denominator.
+    ll p0 = 0, q0 = 1, p1 = 1, q1 = 0;
+    while(true)
+    {
+        ll a = n / d;
+        ll q2 = q0 + a * q1;
+        if(q2 > max_denominator)
+        {
+            break;
+        }
+
+        ll p1_old = p1, q1_old = q1;
+        p1 = p0 + a * p1;
+        q1 = q2;
+        p0 = p1_old;
+        q0 = q1_old;
+
+        ll d_old = d;
+        d = n - a * d;
+        n = d_old;
+    }
+
+    // Obtain two bounds. Choose the one with the smaller denominator if both
+    // are equally accurate.
+    ll k = (max_denominator - q0) / q1;
+    double bound1 = static_cast<double>(p0 + k * p1) / (q0 + k * q1);
+    double bound2 = static_cast<double>(p1) / q1;
+    if(std::abs(bound2 - real) <= std::abs(bound1 - real))
+    {
+        n = p1;
+        d = q1;
+    }
+    else
+    {
+        n = p0 + k * p1;
+        d = q0 + k * q1;
+    }
+
+    if(d == 1)
+    {
+        return sign + std::to_string(n);
+    }
+
+    return sign + std::to_string(n) + "/" + std::to_string(d);
+}
 
 /******************************************************************************
  * A class to represent a polynomial. For instance, the polynomial
@@ -417,119 +502,6 @@ Polynomial operator/(Polynomial const& p, double f)
         d /= f;
     }
     return Polynomial(coeffs, name);
-}
-
-/******************************************************************************
- * Calculate the greatest common divisor of two integers. This implementation
- * is provided because older versions of GCC do not provide an implementation
- * of `std::gcd`, even though they may support the C++17 standard.
- *
- * @param m Positive integer.
- * @param n Positive integer.
- *
- * @return GCD of `m` and `n`.
- *****************************************************************************/
-template<typename Type>
-Type my_gcd(Type m, Type n)
-{
-    while(n != 0)
-    {
-        Type t = m % n;
-        m = n;
-        n = t;
-    }
-    return m;
-}
-
-/******************************************************************************
- * Approximate a real number as a rational number with a small denominator.
- * Much of this code is copied from that of the `limit_denominator` method of
- * the Python class `fractions.Fraction`.
- *
- * @param real Number to approximate.
- * @param max_denominator Maximum denominator the approximation may have.
- *
- * @return Rational approximation of `real`.
- *****************************************************************************/
-std::string rationalise(double real, ilong max_denominator)
-{
-    ilong real_to_int = static_cast<int>(real);
-    if(real_to_int == real)
-    {
-        return std::to_string(real_to_int);
-    }
-
-    // Separate the sign of `real` from its magnitude. This allows the
-    // algorithm to focus on positive values.
-    std::string sign;
-    if(real < 0)
-    {
-        sign = "-";
-    }
-    real = std::abs(real);
-
-    // Obtain a rational approximation with a large denominator. If the
-    // denominator is small after removing the GCD, that's the answer.
-    // `ilong` is used because `int` may overflow.
-    ilong d = 1e12;
-    ilong n = real * d;
-    ilong g = my_gcd(n, d);
-    n /= g;
-    d /= g;
-    if(d <= max_denominator)
-    {
-        if(d == 1)
-        {
-            return sign + std::to_string(n);
-        }
-
-        return sign + std::to_string(n) + "/" + std::to_string(d);
-    }
-
-    // Converge to an approximation with a smaller denominator.
-    ilong p0 = 0, q0 = 1, p1 = 1, q1 = 0;
-    while(true)
-    {
-        ilong a = n / d;
-        ilong q2 = q0 + a * q1;
-        if(q2 > max_denominator)
-        {
-            break;
-        }
-
-        ilong p1_old = p1, q1_old = q1;
-        p1 = p0 + a * p1;
-        q1 = q2;
-        p0 = p1_old;
-        q0 = q1_old;
-
-        ilong d_old = d;
-        d = n - a * d;
-        n = d_old;
-    }
-
-    // Obtain two bounds. Choose the one with the smaller denominator if both
-    // are equally accurate.
-    ilong k = (max_denominator - q0) / q1;
-    double bound1 = static_cast<double>(p0 + k * p1) / (q0 + k * q1);
-    double bound2 = static_cast<double>(p1) / q1;
-    if(std::abs(bound2 - real) <= std::abs(bound1 - real))
-    {
-        n = p1;
-        d = q1;
-    }
-    else
-    {
-        n = p0 + k * p1;
-        d = q0 + k * q1;
-    }
-
-    if(d == 1)
-    {
-        return sign + std::to_string(n);
-    }
-
-    return sign + std::to_string(n) + "/" + std::to_string(d);
 }
 
 /******************************************************************************
