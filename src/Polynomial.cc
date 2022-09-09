@@ -1,6 +1,3 @@
-#ifndef SEQUENCE_INTERPOLATION_POLYNOMIAL_CPP
-#define SEQUENCE_INTERPOLATION_POLYNOMIAL_CPP
-
 #include <algorithm>
 #include <cmath>
 #include <iomanip>
@@ -553,5 +550,3 @@ Polynomial interpolate(std::vector<double> const& x, std::vector<double> const& 
     result.set_name("ip");
     return result;
 }
-
-#endif // SEQUENCE_INTERPOLATION_POLYNOMIAL_CPP

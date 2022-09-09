@@ -1,21 +1,16 @@
 SHELL  = /bin/sh
 CC     = g++
-CFLAGS = -ggdb3 -O2 -std=c++17 -Wall -Wextra -Werror -pedantic-errors
+CPPFLAGS = -O2 -std=c++17 -Wall -Wextra -Werror -pedantic-errors -I./include
+RM     = rm -f
 
-Source = main.cpp
-Binary = main
+Sources    = $(wildcard src/*.cc)
+Objects    = $(Sources:.cc=.o)
+Executable = main
 
-input = input.txt
+.PHONY: clean
 
+$(Executable): $(Objects)
+	$(LINK.cc) -o $(Executable) $(Objects)
 
-.PHONY: comp exec run
-
-
-comp:
-	$(CC) $(CFLAGS) -o $(Binary) $(Source)
-
-exec:
-	./$(Binary) $(input) $(r)
-
-run: comp exec
-
+clean:
+	$(RM) $(Objects) $(Executable)

@@ -3,7 +3,7 @@
 #include <iostream>
 #include <vector>
 
-#include "Polynomial.cpp"
+#include "Polynomial.hh"
 
 /******************************************************************************
  * Main function.

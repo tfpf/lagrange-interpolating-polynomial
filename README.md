@@ -56,7 +56,7 @@ Administrative Services examination!
   - Each line (except the last one) must contain two numbers: the first is the
     line number; the second is the number appearing in the sequence.
   - On the last line, put the position you want find a term of the sequence at.
-- In the terminal, enter the command `make run`.
-  - If you enter `make run r=1` instead of just `make run`, the polynomial
-    coefficients will be displayed in rational form.
+- In the terminal, enter the commands `make` and `./main input.txt`.
+  - If you enter `./main input.txt 1` instead of just `./main input.txt`, the
+    polynomial coefficients will be displayed in rational form.
 
