@@ -3,7 +3,7 @@ CC     = g++
 CPPFLAGS = -O2 -std=c++17 -Wall -Wextra -Werror -pedantic-errors -I./include
 RM     = rm -f
 
-Sources    = $(wildcard src/*.cc)
+Sources    = $(wildcard lib/*.cc)
 Objects    = $(Sources:.cc=.o)
 Executable = main
 
