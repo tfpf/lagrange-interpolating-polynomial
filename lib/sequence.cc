@@ -42,8 +42,8 @@ int main(int const argc, char const* argv[])
     std::cout.precision(12);
 
     p.rational = rational;
-    std::cout << "p ≡ " << p << "\n";
-    std::cout << "p(" << xcoord << ") = " << p(xcoord) << "\n";
+    std::cout << "[3mp[0m ≡ " << p << "\n";
+    std::cout << "[3mp[0m(" << xcoord << ") = " << p(xcoord) << "\n";
     std::cout << "Done in " << delay << " µs.\n";
     return EXIT_SUCCESS;
 }
