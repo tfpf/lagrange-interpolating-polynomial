@@ -1,31 +1,35 @@
 #ifndef SEQUENCE_INTERPOLATION_INCLUDE_POLYNOMIAL_HH_
 #define SEQUENCE_INTERPOLATION_INCLUDE_POLYNOMIAL_HH_
 
+#include <initializer_list>
+#include <iostream>
 #include <string>
 #include <vector>
 
-typedef int long long ll;
-
-std::string rationalise(double real, ll max_denominator=1000000);
-
-class Polynomial
+class Polynomial: public std::vector<double>
 {
-    private: std::vector<double> coeffs;
-    private: std::string name;
+    public:
+    bool rational;
 
-    public: Polynomial(void);
-    public: Polynomial(std::vector<double> const& coeffs);
-    public: Polynomial(std::vector<double> const& coeffs, std::string const& name);
-    public: void sanitise(void);
-    public: void print(bool show_rational=false) const;
-    public: void set_name(std::string const& name);
-    public: std::string get_name(void) const;
-    public: void set_coeffs(std::vector<double> const& coeffs);
-    public: std::vector<double> get_coeffs(void) const;
-    public: double evaluate(double coord) const;
-    public: int degree(void) const;
+    public:
+    Polynomial();
+    Polynomial(std::initializer_list<double> const& list);
+    Polynomial(std::vector<double> const& vector);
+    Polynomial(std::vector<double> const& xcoords, std::vector<double> const& ycoords);
+    void sanitise(void);
+    double operator()(double x);
 };
 
-Polynomial interpolate(std::vector<double> const& x, std::vector<double> const& y);
+std::ostream& operator<<(std::ostream& ostream, Polynomial const& p);
+void operator+=(Polynomial& p, Polynomial const& q);
+Polynomial operator+(Polynomial const& p, Polynomial const& q);
+void operator-=(Polynomial& p, Polynomial const& q);
+Polynomial operator-(Polynomial const& p, Polynomial const& q);
+void operator*=(Polynomial& p, Polynomial const& q);
+Polynomial operator*(Polynomial const& p, Polynomial const& q);
+void operator/=(Polynomial& p, double d);
+Polynomial operator/(Polynomial const& p, double d);
+
+std::string rationalise(double number, int long long max_denominator=1000000);
 
 #endif  // SEQUENCE_INTERPOLATION_INCLUDE_POLYNOMIAL_HH_

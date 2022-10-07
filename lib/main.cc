@@ -1,5 +1,7 @@
 #include <chrono>
+#include <cstdlib>
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <vector>
 
@@ -8,39 +10,40 @@
 /******************************************************************************
  * Main function.
  *****************************************************************************/
-int main(int const argc, char const **argv)
+int main(int const argc, char const* argv[])
 {
     if(argc < 2)
     {
-        std::cout << "usage:\n";
-        std::cout << "\t" << argv[0] << " <input file>\n";
-        return 1;
+        std::cerr << "Usage:\n";
+        std::cerr << "  " << argv[0] << " <input file>\n";
+        return EXIT_FAILURE;
     }
-
-    bool show_rational = (argc >= 3 && argv[2][0] == '1') ? true : false;
-
-    std::ifstream infile(argv[1]);
-    if(!infile)
+    std::ifstream input(argv[1]);
+    if(!input.good())
     {
-        std::cout << "File \'" << argv[1] << "\' could not be read.\n";
-        return 2;
+        std::cerr << "File " << argv[1] << " could not be read.\n";
+        return EXIT_FAILURE;
     }
+    bool rational = (argc >= 3);
 
-    double xcoord, ycoord;
     std::vector<double> xcoords, ycoords;
-    while((infile >> xcoord) && (infile >> ycoord))
+    double xcoord, ycoord;
+    while((input >> xcoord) && (input >> ycoord))
     {
         xcoords.push_back(xcoord);
         ycoords.push_back(ycoord);
     }
-
     auto begin = std::chrono::steady_clock::now();
-    Polynomial poly = interpolate(xcoords, ycoords);
-    double val = poly.evaluate(xcoord);
+    Polynomial p(xcoords, ycoords);
     auto end = std::chrono::steady_clock::now();
-    poly.print(show_rational);
-    std::cout << poly.get_name() << "(" << xcoord << ") = " << val << "\n";
-    std::cout << "actual time taken: " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << " µs" << "\n";
+    auto delay = std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count();
 
-    return 0;
+    // To display more digits after the decimal point.
+    std::cout.precision(12);
+
+    p.rational = rational;
+    std::cout << "p ≡ " << p << "\n";
+    std::cout << "p(" << xcoord << ") = " << p(xcoord) << "\n";
+    std::cout << "Done in " << delay << " µs.\n";
+    return EXIT_SUCCESS;
 }

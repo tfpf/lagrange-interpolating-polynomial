@@ -1,6 +1,6 @@
 SHELL  = /bin/sh
 CC     = g++
-CPPFLAGS = -O2 -std=c++17 -Wall -Wextra -Werror -pedantic-errors -I./include
+CPPFLAGS = -O2 -std=c++17 -Wall -Wextra -Wpedantic -I./include
 RM     = rm -f
 
 Sources    = $(wildcard lib/*.cc)
