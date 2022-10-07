@@ -1,11 +1,11 @@
-SHELL  = /bin/sh
-CC     = g++
+SHELL    = /bin/sh
+CC       = g++
 CPPFLAGS = -O2 -std=c++17 -Wall -Wextra -Wpedantic -I./include
-RM     = rm -f
+RM       = rm -f
 
 Sources    = $(wildcard lib/*.cc)
 Objects    = $(Sources:.cc=.o)
-Executable = main
+Executable = sequence
 
 .PHONY: clean
 

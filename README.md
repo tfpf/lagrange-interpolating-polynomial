@@ -1,4 +1,3 @@
-# introduction
 Often, you may come across questions that give you a sequence of numbers, and
 then ask you to find the next number. Here is an example.
 
@@ -9,19 +8,22 @@ up with this question.
 - If the person was thinking about dividing a circle into separate areas, the
   next number may be 31.
 - If the person likes geometric series, 32 is a probable answer.
-- If the person had multiple-personality disorder, they might have the number
-  473.34876 in mind (who knows).
+- If the person is a member of the interview panel of the Indian Administrative
+  Services, they might have the number 473.34876 in mind. (Who knows!)
 
-You get the idea. Any logician will tell you that any number can be next in the
-sequence.
+I have heard lots of stories about IAS interview panelists asking such
+trick questions (though I don't know if they are true).
+[This XKCD comic](https://xkcd.com/169) demonstrates a possible response to
+trick questions. I abhor violence, so my response to sequence-related trick
+questions is this program.
 
-# purpose
-This program fits a polynomial through a given sequence and predicts the next
-term in the sequence. For instance, given the sequence:
+# Purpose
+It fits a polynomial through a given sequence and predicts the next term. For
+instance, given the sequence:
 <br>
 42, 43, 44, 45, 46, 98756
 <br>
-the program should output the polynomial coefficients:
+it should output the polynomial coefficients:
 <br>
 -98668, 225386.55, -185079.375, 69918.875, -12338.625, 822.575
 <br>
@@ -29,34 +31,35 @@ which allows you to claim that the next term in the sequence
 <br>
 42, 43, 44, 45, 46
 <br>
-is 98756. I wonder if this will nonplus the interviewers of the Indian
-Administrative Services examination!
+is 98756.
 
-# input format example
+# Input Format Example
+```
 1 42
-<br>
 2 43
-<br>
 3 44
-<br>
 4 45
-<br>
 5 46
-<br>
 6 98756
-<br>
 7
+```
 
-# usage
-- Install `g++` to compile this program.
-- Download or clone this repository to some location on your computer.
-- Open a terminal window to that location.
-- Enter the coordinates of the points in the file 'input.txt' (the input format
-  is as explained above).
-  - Each line (except the last one) must contain two numbers: the first is the
-    line number; the second is the number appearing in the sequence.
-  - On the last line, put the position you want find a term of the sequence at.
-- In the terminal, enter the commands `make` and `./main input.txt`.
-  - If you enter `./main input.txt 1` instead of just `./main input.txt`, the
-    polynomial coefficients will be displayed in rational form.
+# Usage
+Enter the coordinates of the points in the file 'points.txt'. The input format
+is as explained in the previous section.
+- Each line (except the last one) must contain two numbers: the first is the
+  x-coordinate (or simply the line number if you don't want to bother with
+  coordinates), and the second is the y-coordinate (i.e. the number appearing
+  in the sequence).
+- On the last line, write the x-coordinate at which you want to find a term of
+  the sequence. For instance, in the example above, we are looking for the
+  seventh term of the sequence.
 
+Compile and run with the following commands.
+```
+make
+./sequence points.txt
+```
+
+If you enter `./sequence points.txt 1` instead of `./sequence points.txt`, the
+coefficients will be displayed in rational form.
