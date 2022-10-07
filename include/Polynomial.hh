@@ -1,5 +1,5 @@
-#ifndef SEQUENCE_INTERPOLATION_INCLUDE_POLYNOMIAL_HH_
-#define SEQUENCE_INTERPOLATION_INCLUDE_POLYNOMIAL_HH_
+#ifndef LAGRANGE_INTERPOLATING_POLYNOMIAL_INCLUDE_POLYNOMIAL_HH_
+#define LAGRANGE_INTERPOLATING_POLYNOMIAL_INCLUDE_POLYNOMIAL_HH_
 
 #include <initializer_list>
 #include <iostream>
@@ -32,4 +32,4 @@ Polynomial operator/(Polynomial const& p, double d);
 
 std::string rationalise(double number, int long long max_denominator=1000000);
 
-#endif  // SEQUENCE_INTERPOLATION_INCLUDE_POLYNOMIAL_HH_
+#endif  // LAGRANGE_INTERPOLATING_POLYNOMIAL_INCLUDE_POLYNOMIAL_HH_
