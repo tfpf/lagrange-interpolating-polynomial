@@ -121,7 +121,6 @@ std::ostream& operator<<(std::ostream& ostream, Polynomial const& p)
     ostream << "[";
     for(auto const& coefficient: p)
     {
-        // std::cout << delimiter << coefficient;
         std::cout << delimiter;
         if(p.rational)
         {
