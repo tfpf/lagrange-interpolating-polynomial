@@ -9,7 +9,7 @@
 class Polynomial: public std::vector<double>
 {
     public:
-    bool rational;
+    bool rational = false;
 
     public:
     Polynomial();

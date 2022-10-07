@@ -12,6 +12,12 @@
 
 #include "Polynomial.hh"
 
+#define THROW(exception, message)  \
+{  \
+    throw exception(std::string(__FILE__) + ':' + std::to_string(__LINE__)  \
+                    + ", in function " + __func__ + ". " + message);  \
+}
+
 /******************************************************************************
  * Constructor. Create an empty vector, which shall be equivalent to a
  * single-element vector containing zero. Both shall represent the zero
@@ -64,11 +70,18 @@ Polynomial::Polynomial(std::vector<double> const& xcoords, std::vector<double> c
     std::size_t num_of_points = std::min(xcoords.size(), ycoords.size());
     if(num_of_points <= 1)
     {
-        throw std::invalid_argument("At least two points are required for interpolation.");
+        THROW(std::invalid_argument, "At least two points are required for interpolation.")
     }
-    if(std::unordered_set<double>(xcoords.cbegin(), xcoords.cbegin() + num_of_points).size() != num_of_points)
+    std::unordered_map<double, std::size_t> unique_xcoords;
+    for(auto const& xcoord: xcoords)
     {
-        throw std::invalid_argument("Unique x-coordinates are required to find the interpolating polynomial.");
+        if(unique_xcoords[xcoord] > 0)
+        {
+            auto str_xcoord = std::to_string(xcoord);
+            std::string message = "Expected distinct x-coordinates, but " + str_xcoord + " occurs multiple times.";
+            THROW(std::invalid_argument, message)
+        }
+        ++unique_xcoords[xcoord];
     }
 
     // Calculate using the formula for the Lagrange interpolating polynomial.
