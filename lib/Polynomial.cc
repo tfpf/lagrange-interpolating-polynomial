@@ -22,6 +22,8 @@
  * Constructor. Create an empty vector, which shall be equivalent to a
  * single-element vector containing zero. Both shall represent the zero
  * polynomial.
+ *
+ * @return The zero polynomial.
  *****************************************************************************/
 Polynomial::Polynomial()
 {
@@ -34,6 +36,8 @@ Polynomial::Polynomial()
  * @param list Coefficients to initialise this polynomial with. The order of
  *     the coefficients shall be in increasing order of the exponent of the
  *     variable (i.e. the constant term must come first).
+ *
+ * @return A polynomial with the given coefficients.
  *****************************************************************************/
 Polynomial::Polynomial(std::initializer_list<double> const& list)
 : std::vector<double>(list)
@@ -47,6 +51,8 @@ Polynomial::Polynomial(std::initializer_list<double> const& list)
  * @param vector Coefficients to initialise this polynomial with. The order of
  *     the coefficients shall be in increasing order of the exponent of the
  *     variable (i.e. the constant term must come first).
+ *
+ * @return A polynomial with the given coefficients.
  *****************************************************************************/
 Polynomial::Polynomial(std::vector<double> const& vector)
 : std::vector<double>(vector)
