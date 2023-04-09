@@ -325,8 +325,9 @@ double Polynomial::operator()(double x)
 
 /******************************************************************************
  * Approximate a real number as a rational number with a small denominator.
- * Much of this code is copied from that of the `limit_denominator` method of
- * the Python class `fractions.Fraction`.
+ * Much of this code is copied from that of the
+ * `fractions.Fraction.limit_denominator` method in the CPython implementation
+ * of the Python standard library.
  *
  * @param number Number to approximate.
  * @param max_denominator Maximum denominator the approximation may have.
