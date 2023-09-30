@@ -30,10 +30,12 @@ term). For instance, given the numbers:
 ```
 42, 43, 44, 45, 46, 98756
 ```
-it should output the polynomial coefficients (constant term first):
+it should output the polynomial coefficients:
 ```
 -98668, 225386.55, -185079.375, 69918.875, -12338.625, 822.575
 ```
+representing
+$$p(x)=-98668+225386.55x-185079.375x^2+69918.875x^3-12338.625x^4+822.575x^5$$
 whereby you can claim, with proof, that the next term in the sequence
 ```
 42, 43, 44, 45, 46, …
